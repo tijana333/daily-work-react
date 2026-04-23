@@ -1,19 +1,13 @@
-import EntryCard from "./components/EntryCard/EntryCard";
-
+import { useState } from "react";
 function App() {
-  const testEntry = {
-    _id: "test-123",
-    date: "2025-01-15",
-    hours: 6,
-    challenge: "Learning React components",
-    intensity: 3,
-  };
-
+  const [count, setCount] = useState(0);
   return (
     <div>
-      <h1>Daily Work</h1>
-      <p>Track your progress, one day at a time</p>
-      <EntryCard entry={testEntry} />
+      <h1> Counter test</h1>
+      <p>Count: {count}</p>
+
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      <button onClick={() => setCount(0)}>Reset</button>
     </div>
   );
 }
