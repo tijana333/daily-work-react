@@ -1,13 +1,16 @@
-import { useState } from "react";
-function App() {
-  const [count, setCount] = useState(0);
-  return (
-    <div>
-      <h1> Counter test</h1>
-      <p>Count: {count}</p>
+import EntryForm from "./components/EntryForm/EntryForm";
 
-      <button onClick={() => setCount(count + 1)}>Increment</button>
-      <button onClick={() => setCount(0)}>Reset</button>
+function App() {
+  return (
+    <div className="container">
+      <header className="header">
+        <div id="header-content">
+          <h1 id="logo">Daily Work</h1>
+          <p>Track your progress, one day at a time</p>
+        </div>
+      </header>
+
+      <EntryForm />
     </div>
   );
 }
