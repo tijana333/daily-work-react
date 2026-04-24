@@ -1,4 +1,12 @@
+import { useState } from "react";
+
 function EntryForm() {
+  const todayDate = new Date().toISOString().substring(0, 10);
+  const [date, setDate] = useState(todayDate);
+  const [hours, setHours] = useState("");
+  const [challenge, setChallenge] = useState("");
+  const [note, setNote] = useState("");
+  const [intensity, setIntensity] = useState(1);
   return (
     <form id="entry-form">
       <div className="form-group">
@@ -7,7 +15,13 @@ function EntryForm() {
             Date <span className="required">*</span>
           </label>
         </div>
-        <input type="date" id="date" name="date" />
+        <input
+          type="date"
+          id="date"
+          name="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+        />
         <span id="date-error" className="catch-error"></span>
       </div>
 
@@ -25,6 +39,8 @@ function EntryForm() {
           max="24"
           step="0.5"
           placeholder="e.g., 8"
+          value={hours}
+          onChange={(e) => setHours(e.target.value)}
         />
         <span id="hours-error" className="catch-error"></span>
       </div>
@@ -35,23 +51,38 @@ function EntryForm() {
         </div>
 
         <div className="buttons">
-          <button type="button" className="intensity-button">
+          <button
+            type="button"
+            className={`intensity-button ${intensity === 1 ? "active" : ""}`}
+            onClick={() => setIntensity(1)}>
             <span className="tab-number">1</span>
             <span className="tab-text">Light</span>
           </button>
-          <button type="button" className="intensity-button">
+          <button
+            type="button"
+            className={`intensity-button ${intensity === 2 ? "active" : ""}`}
+            onClick={() => setIntensity(2)}>
             <span className="tab-number">2</span>
             <span className="tab-text">Easy</span>
           </button>
-          <button type="button" className="intensity-button">
+          <button
+            type="button"
+            className={`intensity-button ${intensity === 3 ? "active" : ""}`}
+            onClick={() => setIntensity(3)}>
             <span className="tab-number">3</span>
             <span className="tab-text">Moderate</span>
           </button>
-          <button type="button" className="intensity-button">
+          <button
+            type="button"
+            className={`intensity-button ${intensity === 4 ? "active" : ""}`}
+            onClick={() => setIntensity(4)}>
             <span className="tab-number">4</span>
             <span className="tab-text">Intense</span>
           </button>
-          <button type="button" className="intensity-button">
+          <button
+            type="button"
+            className={`intensity-button ${intensity === 5 ? "active" : ""}`}
+            onClick={() => setIntensity(5)}>
             <span className="tab-number">5</span>
             <span className="tab-text">Maximum</span>
           </button>
@@ -69,6 +100,8 @@ function EntryForm() {
           id="text"
           name="text"
           placeholder="What was the main challenge today?"
+          value={challenge}
+          onChange={(e) => setChallenge(e.target.value)}
         />
         <span id="challenge-error" className="catch-error"></span>
       </div>
@@ -81,7 +114,9 @@ function EntryForm() {
           id="note"
           name="note"
           rows="5"
-          placeholder="How are you feeling? Any reflections?"></textarea>
+          placeholder="How are you feeling? Any reflections?"
+          value={note}
+          onChange={(e) => setNote(e.target.value)}></textarea>
         <span id="note-error" className="catch-error"></span>
       </div>
 
