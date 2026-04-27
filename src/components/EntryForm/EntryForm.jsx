@@ -1,6 +1,6 @@
-import { useState } from "react";
-import { submitEntry } from "../../api/entriesApi";
-function EntryForm({ onSuccess }) {
+import { useState, useEffect } from "react";
+import { submitEntry, updateEntry } from "../../api/entriesApi";
+function EntryForm({ onSuccess, entryToEdit }) {
   const todayDate = new Date().toISOString().substring(0, 10);
 
   const [date, setDate] = useState(todayDate);
@@ -18,6 +18,18 @@ function EntryForm({ onSuccess }) {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [serverError, setServerError] = useState("");
+  const [editingEntryId, setEditingEntryId] = useState(null);
+
+  useEffect(() => {
+    if (entryToEdit) {
+      setEditingEntryId(entryToEdit._id);
+      setDate(entryToEdit.date);
+      setHours(String(entryToEdit.hours));
+      setChallenge(entryToEdit.challenge);
+      setNote(entryToEdit.note || "");
+      setIntensity(entryToEdit.intensity);
+    }
+  }, [entryToEdit]);
 
   function validate() {
     const newErrors = {
@@ -72,6 +84,7 @@ function EntryForm({ onSuccess }) {
       challenge: "",
       note: "",
     });
+    setEditingEntryId(null);
   }
 
   async function handleSubmit(e) {
@@ -98,10 +111,16 @@ function EntryForm({ onSuccess }) {
     try {
       setIsLoading(true);
 
-      const response = await submitEntry(entry);
+      const response = editingEntryId
+        ? await updateEntry(editingEntryId, entry)
+        : await submitEntry(entry);
 
-      if (response.status === 201) {
-        setSuccessMessage("Entry created successfully!");
+      if (response.status === 201 || response.status === 200) {
+        setSuccessMessage(
+          editingEntryId
+            ? "Entry updated successfully!"
+            : "Entry created successfully!",
+        );
         resetForm();
         onSuccess?.();
       } else if (response.status === 409) {
@@ -268,7 +287,15 @@ function EntryForm({ onSuccess }) {
 
       <div className="form-group">
         <button type="submit" className="button-form" disabled={isLoading}>
-          <span>{isLoading ? "Saving..." : "Save Entry"}</span>
+          <span>
+            {isLoading
+              ? editingEntryId
+                ? "Updating..."
+                : "Saving..."
+              : editingEntryId
+                ? "Update Entry"
+                : "Save Entry"}
+          </span>{" "}
         </button>
 
         {successMessage && <div id="success-message">{successMessage}</div>}
