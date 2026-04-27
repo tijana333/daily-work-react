@@ -1,6 +1,6 @@
-function EntryCard({ entry }) {
+function EntryCard({ entry, onClick }) {
   return (
-    <div className="entry-card">
+    <div className="entry-card" onClick={() => onClick(entry)}>
       <div className="entry-date">{entry.date}</div>
 
       <div className="entry-content">
