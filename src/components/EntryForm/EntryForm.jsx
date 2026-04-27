@@ -1,13 +1,6 @@
 import { useState } from "react";
-
-function EntryForm() {
-  const [errors, setErrors] = useState({
-    date: "",
-    hours: "",
-    challenge: "",
-    note: "",
-  });
-
+import { submitEntry } from "../../api/entriesApi";
+function EntryForm({ onSuccess }) {
   const todayDate = new Date().toISOString().substring(0, 10);
 
   const [date, setDate] = useState(todayDate);
@@ -15,6 +8,16 @@ function EntryForm() {
   const [challenge, setChallenge] = useState("");
   const [note, setNote] = useState("");
   const [intensity, setIntensity] = useState(1);
+
+  const [errors, setErrors] = useState({
+    date: "",
+    hours: "",
+    challenge: "",
+    note: "",
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [serverError, setServerError] = useState("");
 
   function validate() {
     const newErrors = {
@@ -57,8 +60,25 @@ function EntryForm() {
     return newErrors;
   }
 
-  function handleSubmit(e) {
+  function resetForm() {
+    setDate(todayDate);
+    setHours("");
+    setChallenge("");
+    setNote("");
+    setIntensity(1);
+    setErrors({
+      date: "",
+      hours: "",
+      challenge: "",
+      note: "",
+    });
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault();
+
+    setSuccessMessage("");
+    setServerError("");
 
     const validationErrors = validate();
 
@@ -67,7 +87,33 @@ function EntryForm() {
       return;
     }
 
-    console.log("Form is valid");
+    const entry = {
+      date,
+      hours: Number(hours),
+      challenge,
+      note,
+      intensity,
+    };
+
+    try {
+      setIsLoading(true);
+
+      const response = await submitEntry(entry);
+
+      if (response.status === 201) {
+        setSuccessMessage("Entry created successfully!");
+        resetForm();
+        onSuccess?.();
+      } else if (response.status === 409) {
+        setServerError("Entry for this date already exists");
+      } else {
+        setServerError("Something went wrong. Please try again.");
+      }
+    } catch {
+      setServerError("Failed to save entry");
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -217,16 +263,17 @@ function EntryForm() {
           <span id="note-error" className="catch-error show">
             {errors.note}
           </span>
-        )}{" "}
+        )}
       </div>
 
       <div className="form-group">
-        <button type="submit" className="button-form">
-          <span>Save Entry</span>
+        <button type="submit" className="button-form" disabled={isLoading}>
+          <span>{isLoading ? "Saving..." : "Save Entry"}</span>
         </button>
 
-        <div id="success-message">Entry created successfully!</div>
-        <div id="server-error"></div>
+        {successMessage && <div id="success-message">{successMessage}</div>}
+
+        {serverError && <div id="server-error">{serverError}</div>}
       </div>
     </form>
   );
