@@ -37,32 +37,44 @@ function EntriesList({ onEntryClick, refreshKey }) {
         setIsLoading(false);
       }
     }
+
     fetchEntries();
   }, [view, refreshKey]);
+
   return (
     <section className="entries-section">
-      <div className="entries-tabs">
+      {/* TABOVI */}
+      <div className="entries-toggle">
         <button
-          className={view === "month" ? "active" : ""}
+          className={`entries-button ${view === "month" ? "active" : ""}`}
           onClick={() => setView("month")}>
           This Month
         </button>
 
         <button
-          className={view === "all" ? "active" : ""}
+          className={`entries-button ${view === "all" ? "active" : ""}`}
           onClick={() => setView("all")}>
           All Entries
         </button>
       </div>
 
-      {isLoading && <p>Loading entries...</p>}
+      {/* LOADING */}
+      {isLoading && <p id="entries-loading">Loading entries...</p>}
 
+      {/* ERROR */}
       {!isLoading && error && <p className="error-message">{error}</p>}
 
-      {!isLoading && !error && entries.length === 0 && <p>No entries yet.</p>}
+      {/* EMPTY STATE */}
+      {!isLoading && !error && entries.length === 0 && (
+        <div id="empty-state-message">
+          <span id="no-entries">No entries yet</span>
+          <span id="start-entries">Start tracking your progress!</span>
+        </div>
+      )}
 
+      {/* LISTA */}
       {!isLoading && !error && entries.length > 0 && (
-        <div className="entries-list">
+        <div id="entries-list">
           {entries.map((entry) => (
             <EntryCard key={entry._id} entry={entry} onClick={onEntryClick} />
           ))}
@@ -71,4 +83,5 @@ function EntriesList({ onEntryClick, refreshKey }) {
     </section>
   );
 }
+
 export default EntriesList;
