@@ -152,6 +152,8 @@ function EntryForm({ onSuccess, entryToEdit }) {
           onChange={(e) => {
             setDate(e.target.value);
             setErrors((prev) => ({ ...prev, date: "" }));
+            setServerError("");
+            setSuccessMessage("");
           }}
         />
 
