@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { Routes, Route, NavLink } from "react-router-dom";
+
 import EntryForm from "./components/EntryForm/EntryForm";
 import EntriesList from "./components/EntriesList/EntriesList";
 import EntryModal from "./components/EntryModal/EntryModal";
@@ -39,9 +41,45 @@ function App() {
         </div>
       </header>
 
-      <EntryForm onEntryCreated={handleEntryCreated} />
+      <div className="tabs">
+        <NavLink
+          to="/"
+          className={({ isActive }) => (isActive ? "tab active" : "tab")}>
+          Today
+        </NavLink>
 
-      <EntriesList refreshKey={refreshKey} onEntryClick={handleEntryClick} />
+        <NavLink
+          to="/overview"
+          className={({ isActive }) => (isActive ? "tab active" : "tab")}>
+          Overview
+        </NavLink>
+
+        <NavLink
+          to="/entries"
+          className={({ isActive }) => (isActive ? "tab active" : "tab")}>
+          Entries
+        </NavLink>
+      </div>
+
+      <Routes>
+        <Route
+          path="/"
+          element={<EntryForm onEntryCreated={handleEntryCreated} />}
+        />
+
+        <Route
+          path="/entries"
+          element={
+            <EntriesList
+              refreshKey={refreshKey}
+              onEntryClick={handleEntryClick}
+            />
+          }
+        />
+
+        <Route path="/overview" element={<h2>Overview coming soon...</h2>} />
+      </Routes>
+
       <EntryModal
         entry={selectedEntry}
         isOpen={isModalOpen}

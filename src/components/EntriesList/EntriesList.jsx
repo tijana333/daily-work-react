@@ -43,7 +43,7 @@ function EntriesList({ onEntryClick, refreshKey }) {
 
   return (
     <section className="entries-section">
-      {/* TABOVI */}
+      <h2>Work Entries</h2>
       <div className="entries-toggle">
         <button
           className={`entries-button ${view === "month" ? "active" : ""}`}
