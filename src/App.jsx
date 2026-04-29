@@ -1,16 +1,33 @@
 import { useState } from "react";
 import EntryForm from "./components/EntryForm/EntryForm";
 import EntriesList from "./components/EntriesList/EntriesList";
+import EntryModal from "./components/EntryModal/EntryModal";
 
 function App() {
   const [refreshKey, setRefreshKey] = useState(0);
+  const [selectedEntry, setSelectedEntry] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   function handleEntryCreated() {
     setRefreshKey((prev) => prev + 1);
   }
 
   function handleEntryClick(entry) {
-    console.log("Clicked entry:", entry);
+    setSelectedEntry(entry);
+    setIsModalOpen(true);
+  }
+
+  function handleCloseModal() {
+    setSelectedEntry(null);
+    setIsModalOpen(false);
+  }
+
+  function handleDeleteEntry() {
+    setRefreshKey((prev) => prev + 1);
+  }
+
+  function handleEditEntry(entry) {
+    console.log("Edit entry:", entry);
   }
 
   return (
@@ -25,6 +42,13 @@ function App() {
       <EntryForm onEntryCreated={handleEntryCreated} />
 
       <EntriesList refreshKey={refreshKey} onEntryClick={handleEntryClick} />
+      <EntryModal
+        entry={selectedEntry}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onEdit={handleEditEntry}
+        onDelete={handleDeleteEntry}
+      />
     </div>
   );
 }
