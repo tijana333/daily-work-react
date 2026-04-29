@@ -22,7 +22,6 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
   const [serverError, setServerError] = useState("");
   const [editingEntryId, setEditingEntryId] = useState(null);
 
-  // 🔥 POPUNJAVANJE FORME ZA EDIT
   useEffect(() => {
     if (entryToEdit) {
       setEditingEntryId(entryToEdit._id);
@@ -127,7 +126,6 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
 
         resetForm();
 
-        // 🔥 KLJUČNA RAZLIKA
         if (editingEntryId) {
           onEntryUpdated?.();
         } else {
@@ -147,6 +145,7 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
 
   return (
     <form id="entry-form" onSubmit={handleSubmit}>
+      {/* DATE */}
       <div className="form-group">
         <label>
           Date <span className="required">*</span>
@@ -162,6 +161,7 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
         {errors.date && <span className="catch-error show">{errors.date}</span>}
       </div>
 
+      {/* HOURS */}
       <div className="form-group">
         <label>
           Hours worked <span className="required">*</span>
@@ -179,21 +179,54 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
         )}
       </div>
 
+      {/*  INTENSITY  */}
       <div className="form-group">
         <label>Intensity</label>
+
         <div className="buttons">
-          {[1, 2, 3, 4, 5].map((num) => (
-            <button
-              key={num}
-              type="button"
-              className={`intensity-button ${intensity === num ? "active" : ""}`}
-              onClick={() => setIntensity(num)}>
-              {num}
-            </button>
-          ))}
+          <button
+            type="button"
+            className={`intensity-button ${intensity === 1 ? "active" : ""}`}
+            onClick={() => setIntensity(1)}>
+            <span className="tab-number">1</span>
+            <span className="tab-text">Light</span>
+          </button>
+
+          <button
+            type="button"
+            className={`intensity-button ${intensity === 2 ? "active" : ""}`}
+            onClick={() => setIntensity(2)}>
+            <span className="tab-number">2</span>
+            <span className="tab-text">Easy</span>
+          </button>
+
+          <button
+            type="button"
+            className={`intensity-button ${intensity === 3 ? "active" : ""}`}
+            onClick={() => setIntensity(3)}>
+            <span className="tab-number">3</span>
+            <span className="tab-text">Moderate</span>
+          </button>
+
+          <button
+            type="button"
+            className={`intensity-button ${intensity === 4 ? "active" : ""}`}
+            onClick={() => setIntensity(4)}>
+            <span className="tab-number">4</span>
+            <span className="tab-text">Intense</span>
+          </button>
+
+          <button
+            type="button"
+            className={`intensity-button ${intensity === 5 ? "active" : ""}`}
+            onClick={() => setIntensity(5)}>
+            <span className="tab-number">5</span>
+            <span className="tab-text">Maximum</span>
+          </button>
         </div>
       </div>
 
+      {/* CHALLENGE */}
       <div className="form-group">
         <label>
           Today's challenge <span className="required">*</span>
@@ -211,6 +244,7 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
         )}
       </div>
 
+      {/* NOTE */}
       <div className="form-group">
         <label>Personal note</label>
         <textarea
@@ -223,6 +257,7 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
         {errors.note && <span className="catch-error show">{errors.note}</span>}
       </div>
 
+      {/* SUBMIT */}
       <button type="submit" className="button-form" disabled={isLoading}>
         {isLoading
           ? editingEntryId
