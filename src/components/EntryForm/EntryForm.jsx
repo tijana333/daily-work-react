@@ -258,15 +258,19 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
       </div>
 
       {/* SUBMIT */}
-      <button type="submit" className="button-form" disabled={isLoading}>
-        {isLoading
-          ? editingEntryId
-            ? "Updating..."
-            : "Saving..."
-          : editingEntryId
-            ? "Update Entry"
-            : "Save Entry"}
-      </button>
+      <div className="form-group">
+        <button type="submit" className="button-form" disabled={isLoading}>
+          <span>
+            {isLoading
+              ? editingEntryId
+                ? "Updating..."
+                : "Saving..."
+              : editingEntryId
+                ? "Update Entry"
+                : "Save Entry"}
+          </span>
+        </button>
+      </div>
 
       {successMessage && <div id="success-message">{successMessage}</div>}
       {serverError && <div id="server-error">{serverError}</div>}
