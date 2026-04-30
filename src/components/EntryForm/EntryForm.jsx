@@ -145,7 +145,6 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
 
   return (
     <form id="entry-form" onSubmit={handleSubmit}>
-      {/* DATE */}
       <div className="form-group">
         <label>
           Date <span className="required">*</span>
@@ -161,16 +160,22 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
         {errors.date && <span className="catch-error show">{errors.date}</span>}
       </div>
 
-      {/* HOURS */}
       <div className="form-group">
         <label>
           Hours worked <span className="required">*</span>
         </label>
         <input
           type="number"
+          min="0"
+          max="24"
+          step="0.5"
           value={hours}
           onChange={(e) => {
-            setHours(e.target.value);
+            const value = e.target.value;
+
+            if (Number(value) < 0) return;
+
+            setHours(value);
             setErrors((prev) => ({ ...prev, hours: "" }));
           }}
         />
@@ -179,7 +184,6 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
         )}
       </div>
 
-      {/*  INTENSITY  */}
       <div className="form-group">
         <label>Intensity</label>
 
@@ -226,7 +230,6 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
         </div>
       </div>
 
-      {/* CHALLENGE */}
       <div className="form-group">
         <label>
           Today's challenge <span className="required">*</span>
@@ -244,7 +247,6 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
         )}
       </div>
 
-      {/* NOTE */}
       <div className="form-group">
         <label>Personal note</label>
         <textarea
@@ -257,7 +259,6 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
         {errors.note && <span className="catch-error show">{errors.note}</span>}
       </div>
 
-      {/* SUBMIT */}
       <div className="form-group">
         <button type="submit" className="button-form" disabled={isLoading}>
           <span>
