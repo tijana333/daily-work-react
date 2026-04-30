@@ -5,6 +5,12 @@ const API_URL = "https://daily-work-backend.vercel.app/api/entries";
 function Heatmap() {
   const [activeMonth, setActiveMonth] = useState(new Date());
   const [heatmapEntries, setHeatmapEntries] = useState([]);
+  const [tooltip, setTooltip] = useState({
+    visible: false,
+    content: "",
+    x: 0,
+    y: 0,
+  });
 
   const activeYear = activeMonth.getFullYear();
   const activeMonthIndex = activeMonth.getMonth();
@@ -62,6 +68,26 @@ function Heatmap() {
     });
   }
 
+  function handleMouseEnter(event, entry) {
+    if (!entry) return;
+
+    setTooltip({
+      visible: true,
+      content: `${entry.date} | ${entry.hours}h | Intensity ${entry.intensity}`,
+      x: event.clientX,
+      y: event.clientY,
+    });
+  }
+
+  function handleMouseLeave() {
+    setTooltip({
+      visible: false,
+      content: "",
+      x: 0,
+      y: 0,
+    });
+  }
+
   const totalHours = heatmapEntries.reduce((sum, entry) => {
     return sum + Number(entry.hours);
   }, 0);
@@ -106,10 +132,24 @@ function Heatmap() {
                     entry
                       ? `heatmap-day level-${entry.intensity}`
                       : "heatmap-day"
-                  }></div>
+                  }
+                  onMouseEnter={(event) => handleMouseEnter(event, entry)}
+                  onMouseLeave={handleMouseLeave}></div>
               );
             })}
           </div>
+
+          {tooltip.visible && (
+            <div
+              className="heatmap-tooltip"
+              style={{
+                display: "block",
+                left: `${tooltip.x}px`,
+                top: `${tooltip.y - 40}px`,
+              }}>
+              {tooltip.content}
+            </div>
+          )}
         </div>
       </div>
 
