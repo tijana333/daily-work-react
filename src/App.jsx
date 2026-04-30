@@ -11,6 +11,7 @@ import EntryForm from "./components/EntryForm/EntryForm";
 import EntriesList from "./components/EntriesList/EntriesList";
 import EntryModal from "./components/EntryModal/EntryModal";
 import Heatmap from "./components/Heatmap/Heatmap";
+
 function App() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedEntry, setSelectedEntry] = useState(null);
@@ -41,12 +42,13 @@ function App() {
 
   function handleDeleteEntry() {
     setRefreshKey((prev) => prev + 1);
+    handleCloseModal();
   }
 
   function handleEditEntry(entry) {
     setEntryToEdit(entry);
-    setIsModalOpen(false);
     setSelectedEntry(null);
+    setIsModalOpen(false);
     navigate("/");
   }
 
@@ -90,12 +92,15 @@ function App() {
           path="/"
           element={
             <EntryForm
-              onEntryCreated={handleEntryCreated}
               entryToEdit={entryToEdit}
+              onEntryCreated={handleEntryCreated}
               onEntryUpdated={handleEntryUpdated}
+              onEntryFoundForDate={setEntryToEdit}
             />
           }
         />
+
+        <Route path="/overview" element={<Heatmap />} />
 
         <Route
           path="/entries"
@@ -106,8 +111,6 @@ function App() {
             />
           }
         />
-
-        <Route path="/overview" element={<Heatmap />} />
       </Routes>
 
       <EntryModal
