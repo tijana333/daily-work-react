@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { submitEntry, updateEntry } from "../../api/entriesApi";
-function EntryForm({ onSuccess, entryToEdit }) {
+
+function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
   const todayDate = new Date().toISOString().substring(0, 10);
 
   const [date, setDate] = useState(todayDate);
@@ -15,6 +16,7 @@ function EntryForm({ onSuccess, entryToEdit }) {
     challenge: "",
     note: "",
   });
+
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [serverError, setServerError] = useState("");
@@ -53,7 +55,6 @@ function EntryForm({ onSuccess, entryToEdit }) {
       newErrors.date = "Date is required.";
     } else {
       const today = new Date().toISOString().substring(0, 10);
-
       if (date > today) {
         newErrors.date = "Date cannot be in the future.";
       }
@@ -78,13 +79,14 @@ function EntryForm({ onSuccess, entryToEdit }) {
     setChallenge("");
     setNote("");
     setIntensity(1);
+    setEditingEntryId(null);
+
     setErrors({
       date: "",
       hours: "",
       challenge: "",
       note: "",
     });
-    setEditingEntryId(null);
   }
 
   async function handleSubmit(e) {
@@ -121,8 +123,14 @@ function EntryForm({ onSuccess, entryToEdit }) {
             ? "Entry updated successfully!"
             : "Entry created successfully!",
         );
+
         resetForm();
-        onSuccess?.();
+
+        if (editingEntryId) {
+          onEntryUpdated?.();
+        } else {
+          onEntryCreated?.();
+        }
       } else if (response.status === 409) {
         setServerError("Entry for this date already exists");
       } else {
@@ -137,66 +145,43 @@ function EntryForm({ onSuccess, entryToEdit }) {
 
   return (
     <form id="entry-form" onSubmit={handleSubmit}>
+      {/* DATE */}
       <div className="form-group">
-        <div className="form-label">
-          <label htmlFor="date">
-            Date <span className="required">*</span>
-          </label>
-        </div>
-
+        <label>
+          Date <span className="required">*</span>
+        </label>
         <input
           type="date"
-          id="date"
-          name="date"
           value={date}
           onChange={(e) => {
             setDate(e.target.value);
             setErrors((prev) => ({ ...prev, date: "" }));
-            setServerError("");
-            setSuccessMessage("");
           }}
         />
-
-        {errors.date && (
-          <span id="date-error" className="catch-error show">
-            {errors.date}
-          </span>
-        )}
+        {errors.date && <span className="catch-error show">{errors.date}</span>}
       </div>
 
+      {/* HOURS */}
       <div className="form-group">
-        <div className="form-label">
-          <label htmlFor="number">
-            Hours worked <span className="required">*</span>
-          </label>
-        </div>
-
+        <label>
+          Hours worked <span className="required">*</span>
+        </label>
         <input
-          id="number"
           type="number"
-          name="number"
-          min="0.5"
-          max="24"
-          step="0.5"
-          placeholder="e.g., 8"
           value={hours}
           onChange={(e) => {
             setHours(e.target.value);
             setErrors((prev) => ({ ...prev, hours: "" }));
           }}
         />
-
         {errors.hours && (
-          <span id="hours-error" className="catch-error show">
-            {errors.hours}
-          </span>
+          <span className="catch-error show">{errors.hours}</span>
         )}
       </div>
 
+      {/*  INTENSITY  */}
       <div className="form-group">
-        <div className="form-label">
-          <label>Intensity</label>
-        </div>
+        <label>Intensity</label>
 
         <div className="buttons">
           <button
@@ -241,18 +226,13 @@ function EntryForm({ onSuccess, entryToEdit }) {
         </div>
       </div>
 
+      {/* CHALLENGE */}
       <div className="form-group">
-        <div className="form-label">
-          <label htmlFor="text">
-            Today's challenge <span className="required">*</span>
-          </label>
-        </div>
-
+        <label>
+          Today's challenge <span className="required">*</span>
+        </label>
         <input
           type="text"
-          id="text"
-          name="text"
-          placeholder="What was the main challenge today?"
           value={challenge}
           onChange={(e) => {
             setChallenge(e.target.value);
@@ -260,33 +240,24 @@ function EntryForm({ onSuccess, entryToEdit }) {
           }}
         />
         {errors.challenge && (
-          <span id="challenge-error" className="catch-error show">
-            {errors.challenge}
-          </span>
+          <span className="catch-error show">{errors.challenge}</span>
         )}
       </div>
 
+      {/* NOTE */}
       <div className="form-group">
-        <div className="form-label">
-          <label htmlFor="note">Personal note</label>
-        </div>
+        <label>Personal note</label>
         <textarea
-          id="note"
-          name="note"
-          rows="5"
-          placeholder="How are you feeling? Any reflections?"
           value={note}
           onChange={(e) => {
             setNote(e.target.value);
             setErrors((prev) => ({ ...prev, note: "" }));
-          }}></textarea>
-        {errors.note && (
-          <span id="note-error" className="catch-error show">
-            {errors.note}
-          </span>
-        )}
+          }}
+        />
+        {errors.note && <span className="catch-error show">{errors.note}</span>}
       </div>
 
+      {/* SUBMIT */}
       <div className="form-group">
         <button type="submit" className="button-form" disabled={isLoading}>
           <span>
@@ -297,13 +268,12 @@ function EntryForm({ onSuccess, entryToEdit }) {
               : editingEntryId
                 ? "Update Entry"
                 : "Save Entry"}
-          </span>{" "}
+          </span>
         </button>
-
-        {successMessage && <div id="success-message">{successMessage}</div>}
-
-        {serverError && <div id="server-error">{serverError}</div>}
       </div>
+
+      {successMessage && <div id="success-message">{successMessage}</div>}
+      {serverError && <div id="server-error">{serverError}</div>}
     </form>
   );
 }

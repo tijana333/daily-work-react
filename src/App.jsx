@@ -1,5 +1,11 @@
-import { useState } from "react";
-import { Routes, Route, NavLink } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+  Routes,
+  Route,
+  NavLink,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 
 import EntryForm from "./components/EntryForm/EntryForm";
 import EntriesList from "./components/EntriesList/EntriesList";
@@ -9,9 +15,18 @@ function App() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedEntry, setSelectedEntry] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [entryToEdit, setEntryToEdit] = useState(null);
+
+  const navigate = useNavigate();
+  const location = useLocation();
 
   function handleEntryCreated() {
     setRefreshKey((prev) => prev + 1);
+  }
+
+  function handleEntryUpdated() {
+    setRefreshKey((prev) => prev + 1);
+    setEntryToEdit(null);
   }
 
   function handleEntryClick(entry) {
@@ -29,8 +44,17 @@ function App() {
   }
 
   function handleEditEntry(entry) {
-    console.log("Edit entry:", entry);
+    setEntryToEdit(entry);
+    setIsModalOpen(false);
+    setSelectedEntry(null);
+    navigate("/");
   }
+
+  useEffect(() => {
+    if (location.pathname !== "/") {
+      setEntryToEdit(null);
+    }
+  }, [location.pathname]);
 
   return (
     <div className="container">
@@ -64,7 +88,13 @@ function App() {
       <Routes>
         <Route
           path="/"
-          element={<EntryForm onEntryCreated={handleEntryCreated} />}
+          element={
+            <EntryForm
+              onEntryCreated={handleEntryCreated}
+              entryToEdit={entryToEdit}
+              onEntryUpdated={handleEntryUpdated}
+            />
+          }
         />
 
         <Route
