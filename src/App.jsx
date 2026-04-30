@@ -10,7 +10,7 @@ import {
 import EntryForm from "./components/EntryForm/EntryForm";
 import EntriesList from "./components/EntriesList/EntriesList";
 import EntryModal from "./components/EntryModal/EntryModal";
-
+import Heatmap from "./components/Heatmap/Heatmap";
 function App() {
   const [refreshKey, setRefreshKey] = useState(0);
   const [selectedEntry, setSelectedEntry] = useState(null);
@@ -107,7 +107,7 @@ function App() {
           }
         />
 
-        <Route path="/overview" element={<h2>Overview coming soon...</h2>} />
+        <Route path="/overview" element={<Heatmap />} />
       </Routes>
 
       <EntryModal
