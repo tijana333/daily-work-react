@@ -1,16 +1,77 @@
-# React + Vite
+# 🚀 Daily Work
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Daily Work is a React application for tracking daily productivity, work hours, and challenges.
 
-Currently, two official plugins are available:
+It helps users stay consistent, monitor progress, and visualize their work through a clean interface and a monthly heatmap.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## ✨ Features
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Add daily work entries
+- Edit existing entries
+- Delete entries
+- View entries (This Month / All Entries)
+- Monthly heatmap overview
+- Statistics (total hours, days logged, average intensity)
+- Entry details modal
+- Intensity tracking system
+- Responsive design
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Tech Stack
+
+- React (Hooks)
+- Vite
+- React Router
+- REST API
+- CSS
+
+---
+
+## 🌍 Live Demo
+
+https://daily-work-react.vercel.app
+
+---
+
+## 🧠 What I Practiced
+
+- React state management
+- Lifting state up
+- useEffect
+- CRUD operations
+- Routing
+- API integration
+- Component structure
+- Deployment
+
+---
+
+## 📁 Project Structure
+
+src/
+components/
+EntryForm/
+EntriesList/
+EntryModal/
+Heatmap/
+EntryCard/
+api/
+entriesApi.js
+App.jsx
+main.jsx
+
+---
+
+## ⚙️ Setup
+
+npm install
+npm run dev
+
+---
+
+## 👩‍💻 Author
+
+Tijana Đuknić
