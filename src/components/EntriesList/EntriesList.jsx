@@ -24,8 +24,22 @@ function EntriesList({ onEntryClick, refreshKey }) {
         }
 
         const result = await response.json();
+        const now = new Date();
 
-        const sortedEntries = result.data.sort(
+        let filtered = result.data;
+
+        if (view === "month") {
+          filtered = result.data.filter((entry) => {
+            const entryDate = new Date(entry.date);
+
+            return (
+              entryDate.getMonth() === now.getMonth() &&
+              entryDate.getFullYear() === now.getFullYear()
+            );
+          });
+        }
+
+        const sortedEntries = [...filtered].sort(
           (a, b) => new Date(b.date) - new Date(a.date),
         );
 

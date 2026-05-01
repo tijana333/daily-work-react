@@ -51,7 +51,7 @@ function Heatmap() {
     }
 
     fetchHeatmapEntries();
-  }, [activeMonth, activeYear, activeMonthIndex]);
+  }, [activeMonth]);
 
   function goToPreviousMonth() {
     setActiveMonth(new Date(activeYear, activeMonthIndex - 1, 1));
