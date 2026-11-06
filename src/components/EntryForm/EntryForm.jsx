@@ -9,11 +9,15 @@ import { getTodayDate } from "../../utils/dates";
 function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
   const todayDate = getTodayDate();
 
-  const [date, setDate] = useState(todayDate);
-  const [hours, setHours] = useState("");
-  const [challenge, setChallenge] = useState("");
-  const [note, setNote] = useState("");
-  const [intensity, setIntensity] = useState(1);
+  // The form is mounted each time the "/" route opens, so an entry
+  // chosen with Edit is used directly as the initial state
+  const [date, setDate] = useState(entryToEdit?.date ?? todayDate);
+  const [hours, setHours] = useState(
+    entryToEdit ? String(entryToEdit.hours ?? "") : "",
+  );
+  const [challenge, setChallenge] = useState(entryToEdit?.challenge ?? "");
+  const [note, setNote] = useState(entryToEdit?.note ?? "");
+  const [intensity, setIntensity] = useState(entryToEdit?.intensity ?? 1);
 
   const [errors, setErrors] = useState({
     date: "",
@@ -25,11 +29,13 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
   const [isLoading, setIsLoading] = useState(false);
   const [successMessage, setSuccessMessage] = useState("");
   const [serverError, setServerError] = useState("");
-  const [editingEntryId, setEditingEntryId] = useState(null);
+  const [editingEntryId, setEditingEntryId] = useState(
+    entryToEdit?._id ?? null,
+  );
 
   // The date of the latest lookup, so a slow response for a date
   // the user already changed is ignored
-  const latestDateRef = useRef(null);
+  const latestDateRef = useRef(entryToEdit?.date ?? null);
 
   const fillForm = useCallback((entry) => {
     setEditingEntryId(entry._id);
@@ -73,14 +79,12 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
     [fillForm, clearEntryFields],
   );
 
+  // Without an entry to edit, check whether today already has one
   useEffect(() => {
-    if (entryToEdit) {
-      latestDateRef.current = entryToEdit.date;
-      fillForm(entryToEdit);
-    } else {
+    if (!entryToEdit) {
       loadEntryForDate(getTodayDate(), false);
     }
-  }, [entryToEdit, fillForm, loadEntryForDate]);
+  }, [entryToEdit, loadEntryForDate]);
 
   function validate() {
     const newErrors = {

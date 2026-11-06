@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Routes,
   Route,
@@ -52,11 +52,16 @@ function App() {
     navigate("/");
   }
 
-  useEffect(() => {
+  // Leaving the Today page cancels editing. This runs during render
+  // when the path changes (instead of in an effect), as recommended in
+  // https://react.dev/learn/you-might-not-need-an-effect
+  const [previousPath, setPreviousPath] = useState(location.pathname);
+  if (location.pathname !== previousPath) {
+    setPreviousPath(location.pathname);
     if (location.pathname !== "/") {
       setEntryToEdit(null);
     }
-  }, [location.pathname]);
+  }
 
   return (
     <div className="container">
