@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { loadEntries } from "../../api/entriesApi";
+import { parseLocalDate } from "../../utils/dates";
 
 function Heatmap() {
   const [activeMonth, setActiveMonth] = useState(new Date());
@@ -62,8 +63,7 @@ function Heatmap() {
 
   function getEntryForDay(day) {
     return heatmapEntries.find((entry) => {
-      const entryDate = new Date(entry.date);
-      return entryDate.getDate() === day;
+      return parseLocalDate(entry.date).getDate() === day;
     });
   }
 

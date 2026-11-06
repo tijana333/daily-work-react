@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { submitEntry, updateEntry } from "../../api/entriesApi";
+import { getTodayDate } from "../../utils/dates";
 
 function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
-  const todayDate = new Date().toISOString().substring(0, 10);
+  const todayDate = getTodayDate();
 
   const [date, setDate] = useState(todayDate);
   const [hours, setHours] = useState("");
@@ -54,8 +55,7 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
     if (!date) {
       newErrors.date = "Date is required.";
     } else {
-      const today = new Date().toISOString().substring(0, 10);
-      if (date > today) {
+      if (date > getTodayDate()) {
         newErrors.date = "Date cannot be in the future.";
       }
     }
@@ -152,6 +152,7 @@ function EntryForm({ onEntryCreated, onEntryUpdated, entryToEdit }) {
         <input
           type="date"
           value={date}
+          max={todayDate}
           onChange={(e) => {
             setDate(e.target.value);
             setErrors((prev) => ({ ...prev, date: "" }));
