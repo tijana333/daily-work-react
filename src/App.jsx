@@ -95,7 +95,6 @@ function App() {
               entryToEdit={entryToEdit}
               onEntryCreated={handleEntryCreated}
               onEntryUpdated={handleEntryUpdated}
-              onEntryFoundForDate={setEntryToEdit}
             />
           }
         />
