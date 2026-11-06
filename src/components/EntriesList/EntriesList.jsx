@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import EntryCard from "../EntryCard/EntryCard";
-
-const API_URL = "https://daily-work-backend.vercel.app/api/entries";
+import { loadEntries } from "../../api/entriesApi";
 
 function EntriesList({ onEntryClick, refreshKey }) {
   const [entries, setEntries] = useState([]);
@@ -10,49 +9,45 @@ function EntriesList({ onEntryClick, refreshKey }) {
   const [view, setView] = useState("month");
 
   useEffect(() => {
+    // Set to true when view changes again before this request finishes,
+    // so an older, slower response can't overwrite the newer one
+    let ignore = false;
+
     async function fetchEntries() {
+      setIsLoading(true);
+      setError("");
+
       try {
-        setIsLoading(true);
-        setError("");
+        const now = new Date();
+        const params =
+          view === "month"
+            ? { month: now.getMonth() + 1, year: now.getFullYear() }
+            : {};
 
-        const url = view === "month" ? `${API_URL}?view=month` : API_URL;
-
-        const response = await fetch(url);
+        const response = await loadEntries(params);
+        if (ignore) return;
 
         if (!response.ok) {
           throw new Error("Failed to fetch entries");
         }
 
-        const result = await response.json();
-        const now = new Date();
-
-        let filtered = result.data;
-
-        if (view === "month") {
-          filtered = result.data.filter((entry) => {
-            const entryDate = new Date(entry.date);
-
-            return (
-              entryDate.getMonth() === now.getMonth() &&
-              entryDate.getFullYear() === now.getFullYear()
-            );
-          });
-        }
-
-        const sortedEntries = [...filtered].sort(
-          (a, b) => new Date(b.date) - new Date(a.date),
+        const sortedEntries = [...(response.data.data || [])].sort((a, b) =>
+          b.date.localeCompare(a.date),
         );
-
         setEntries(sortedEntries);
-      } catch (error) {
+      } catch {
+        if (ignore) return;
         setError("Could not load entries.");
         setEntries([]);
       } finally {
-        setIsLoading(false);
+        if (!ignore) setIsLoading(false);
       }
     }
 
     fetchEntries();
+    return () => {
+      ignore = true;
+    };
   }, [view, refreshKey]);
 
   return (

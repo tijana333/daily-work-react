@@ -1,44 +1,44 @@
 const API_URL = "https://daily-work-backend.vercel.app/api/entries";
 
-export async function submitEntry(entry) {
-  const response = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(entry),
-  });
-  const data = await response.json();
+// Every request returns { status, ok, data }.
+// DELETE may return an empty body, so data can be null.
+async function request(url, options) {
+  const response = await fetch(url, options);
+  const text = await response.text();
   return {
     status: response.status,
-    data,
+    ok: response.ok,
+    data: text ? JSON.parse(text) : null,
   };
 }
 
-export async function updateEntry(id, entry) {
-  const response = await fetch(API_URL + "/" + id, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(entry),
-  });
-  const data = await response.json();
+function jsonOptions(method, body) {
   return {
-    status: response.status,
-    data,
+    method,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
   };
 }
 
-export async function loadEntryByDate(selectedDate) {
-  const response = await fetch(API_URL + "?date=" + selectedDate);
-  const data = await response.json();
-  return {
-    status: response.status,
-    data,
-  };
+// Without arguments loads all entries,
+// with { month, year } loads only that month (month is 1-12)
+export function loadEntries({ month, year } = {}) {
+  const url = month && year ? `${API_URL}?month=${month}&year=${year}` : API_URL;
+  return request(url);
 }
-export async function loadEntries(url) {
-  const response = await fetch(url);
-  const data = await response.json();
-  return {
-    status: response.status,
-    data,
-  };
+
+export function loadEntryByDate(date) {
+  return request(`${API_URL}?date=${date}`);
+}
+
+export function submitEntry(entry) {
+  return request(API_URL, jsonOptions("POST", entry));
+}
+
+export function updateEntry(id, entry) {
+  return request(`${API_URL}/${id}`, jsonOptions("PUT", entry));
+}
+
+export function deleteEntry(id) {
+  return request(`${API_URL}/${id}`, { method: "DELETE" });
 }

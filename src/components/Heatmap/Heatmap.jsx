@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-
-const API_URL = "https://daily-work-backend.vercel.app/api/entries";
+import { loadEntries } from "../../api/entriesApi";
 
 function Heatmap() {
   const [activeMonth, setActiveMonth] = useState(new Date());
@@ -24,34 +23,34 @@ function Heatmap() {
   const days = Array.from({ length: daysInMonth }, (_, index) => index + 1);
 
   useEffect(() => {
+    // Set to true when the month changes before this request finishes,
+    // so a slow response for the previous month is not shown
+    let ignore = false;
+
     async function fetchHeatmapEntries() {
       try {
-        const response = await fetch(API_URL);
+        const response = await loadEntries({
+          month: activeMonthIndex + 1,
+          year: activeYear,
+        });
+        if (ignore) return;
 
         if (!response.ok) {
           throw new Error("Failed to fetch entries");
         }
 
-        const result = await response.json();
-
-        const entriesForMonth = result.data.filter((entry) => {
-          const entryDate = new Date(entry.date);
-
-          return (
-            entryDate.getFullYear() === activeYear &&
-            entryDate.getMonth() === activeMonthIndex
-          );
-        });
-
-        setHeatmapEntries(entriesForMonth);
-      } catch (error) {
-        console.error(error);
+        setHeatmapEntries(response.data.data || []);
+      } catch {
+        if (ignore) return;
         setHeatmapEntries([]);
       }
     }
 
     fetchHeatmapEntries();
-  }, [activeMonth]);
+    return () => {
+      ignore = true;
+    };
+  }, [activeYear, activeMonthIndex]);
 
   function goToPreviousMonth() {
     setActiveMonth(new Date(activeYear, activeMonthIndex - 1, 1));

@@ -1,4 +1,4 @@
-const API_URL = "https://daily-work-backend.vercel.app/api/entries";
+import { deleteEntry } from "../../api/entriesApi";
 
 function EntryModal({ entry, isOpen, onClose, onEdit, onDelete }) {
   if (!isOpen || !entry) {
@@ -13,18 +13,15 @@ function EntryModal({ entry, isOpen, onClose, onEdit, onDelete }) {
     if (!confirmed) return;
 
     try {
-      const response = await fetch(`${API_URL}/${entry._id}`, {
-        method: "DELETE",
-      });
+      const response = await deleteEntry(entry._id);
 
       if (!response.ok) {
         throw new Error("Failed to delete entry");
       }
 
+      // onDelete refreshes the list and closes the modal
       onDelete();
-      onClose();
-    } catch (error) {
-      console.error(error);
+    } catch {
       alert("Could not delete entry.");
     }
   }
